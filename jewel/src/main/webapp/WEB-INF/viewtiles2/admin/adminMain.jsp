@@ -8,14 +8,14 @@
 <title>Insert title here</title>
 </head>
 <script type="text/javascript">
-
+var chardata=new Array();
 function a(){
 	
 
 	$.ajax({
 	      url : '<c:url value="/adminMain"/>',
 	      dataType :"json",
-	      async: false,
+	      
 	      success: function(data) {
 	    	 
 	    	  $("#cnt1").html(data.cnt1);
@@ -29,7 +29,64 @@ function a(){
 	    });
 
 }
+function b(){
+	$.ajax({
+	      url : '<c:url value="/adminWeek"/>',
+	      dataType :"json",
+	      
+	      success: function(data) {
 
+	    		  chardata.push(data.cnt1);
+	    		  chardata.push(data.cnt2);
+	    		  chardata.push(data.cnt3);
+	    		  chardata.push(data.cnt4);
+	    		  chardata.push(data.cnt5);
+	    		  chardata.push(data.cnt6);  
+	    		  chardata.push(data.cnt7);
+	    		  
+	    		  var ctx = document.getElementById('myChart');
+
+
+	    	      var myChart = new Chart.Line(ctx, {
+	    	      	
+	    	      	data: {
+	    	      		labels: ['일','월','화','수','목','금','토'],
+	    	      		datasets: [{		
+	    	      			label: '매출', 
+	    	      			data: chardata,
+	    	      			borderColor: "rgba(54,162,235,1)",
+	    	                  backgroundColor: "rgba(54,162,235,0.5)",
+	    	                  fill: true,
+	    	      			lineTension: 0,
+	    	      			
+	    	      		}]
+	    	      		
+	    	      	},
+	    	      	options:{
+	    	      		maintainAspectRatio: false,
+	    	      		title:{
+	    	      			display:true,
+	    	      			text:'주간 매출'
+	    	      		},
+	    	      		scales:{
+	    	      			yAxes:[{
+	    	      				ticks:{
+	    	      					beginAtZero:true
+	    	      				}
+	    	      			}]
+	    	      		}
+	    	      	}
+	    	      	});
+	    		
+	      },
+	      error:function(request,status,error){
+	          alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+	         }
+	    });
+}
+
+
+	
 </script>
 <body>
 
@@ -109,27 +166,16 @@ function a(){
                   <i class="fas fa-chart-pie mr-1"></i>
                   Sales
                 </h3>
-                <div class="card-tools">
-                  <ul class="nav nav-pills ml-auto">
-                    <li class="nav-item">
-                      <a class="nav-link active" href="#revenue-chart" data-toggle="tab">Area</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#sales-chart" data-toggle="tab">Donut</a>
-                    </li>
-                  </ul>
-                </div>
+ <!-- 그래프 ---------------------------------------------------------------------------------------------------------------------------------------------------- -->              
               </div><!-- /.card-header -->
               <div class="card-body">
                 <div class="tab-content p-0">
                   <!-- Morris chart - Sales -->
                   <div class="chart tab-pane active" id="revenue-chart"
                        style="position: relative; height: 300px;">
-                      <canvas id="revenue-chart-canvas" height="300" style="height: 300px;"></canvas>                         
+                      <canvas id="myChart">></canvas>                        
                    </div>
-                  <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;">
-                    <canvas id="sales-chart-canvas" height="300" style="height: 300px;"></canvas>                         
-                  </div>  
+<!-- ---------------------------------------------------------------------------------------------------------------------------------------------------- -->                    
                 </div>
               </div><!-- /.card-body -->
             </div>
@@ -620,8 +666,11 @@ function a(){
         </div>
         <!-- /.row (main row) -->
       </div>
+
 </body>
 </html>
 <script type="text/javascript">
 a();
+b();
+
 </script>

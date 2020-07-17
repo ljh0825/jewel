@@ -2,6 +2,7 @@ package com.jewel.admin.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -129,41 +130,22 @@ public class AdminDeliveryController {
 		
 		return mv;
 	}
-	@RequestMapping(value="/adminWeeklySale")
-	public ModelAndView adminWeeklySale(CommandMap commandMap,HttpServletRequest request)throws Exception{
+	@RequestMapping(value="/adminWeek")
+	public ModelAndView adminWeek(CommandMap commandMap,HttpServletRequest request)throws Exception{
 			ModelAndView mv=new ModelAndView("jsonView");  
 			
-			int show=12;
-	    	int block=5;
-	    	int pg;
-	    	if(commandMap.get("pg")==null) {
-		    	  pg=1;
-		      }
-	    	else {
-	    	pg=Integer.parseInt((String)commandMap.get("pg"));
-	    	}
-	    	
-	    	int endNum = pg*show;
-			int startNum = endNum-(show-1);
+			Map<String,Object> map=AdminDeliveryService.selectWeek(commandMap.getMap());
+			for(int i=1;i<=map.size();i++) {
+				String OR_DATE = (String)map.get("W"+i);
+				
+				
+				int cnt =AdminDeliveryService.selectSaleCnt(OR_DATE);
 			
-			commandMap.put("START_NUM", startNum);
-			commandMap.put("END_NUM", endNum);
+		        mv.addObject("cnt"+i,cnt);
+		     }
 			
-	    	@SuppressWarnings("unused")
-			int totalList=AdminDeliveryService.refundTotalList(commandMap.getMap());
-	    	AdminDeliveryListPaging.setPath(request.getContextPath());
-	    	AdminDeliveryListPaging.setCurrentPage(pg);
-	    	AdminDeliveryListPaging.setTotalList(totalList);
-	    	AdminDeliveryListPaging.setPageBlock(block);
-	    	AdminDeliveryListPaging.setPageSize(show);
-	    	
-	    	AdminDeliveryListPaging.makePagingrHTML();
-	    
-	    	mv.addObject("AdminRefundListPaging",AdminDeliveryListPaging);
-			
-			List<Map<String,Object>>list=AdminDeliveryService.selectRefundList(commandMap.getMap());
-		  mv.addObject("list",list);
 		 
 		return mv;
 	}
+	
 }
